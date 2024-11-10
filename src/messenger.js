@@ -146,10 +146,12 @@ const Messenger = (config) => {
     const msg = messageFormatter(data, config);
     self.messaging_mode = debounce_engine.is_debounce_needed()? messagingModes.collecting:messagingModes.instant;
     console.log('Messaging Mode set as='+self.messaging_mode);
-    if (self.messaging_mode ==  messagingModes.instant) {
-      send_message_to_telegram(config.bot_token, config.chat_id, msg)
-    } else {
-      debounce_engine.add_to_queue(msg);
+    if (msg && !msg.includes("ECONNRESET")) {
+      if (self.messaging_mode ==  messagingModes.instant) {
+        send_message_to_telegram(config.bot_token, config.chat_id, msg)
+      } else {
+        debounce_engine.add_to_queue(msg);
+      }
     }
   };
   return { send }
